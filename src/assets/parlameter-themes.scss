@@ -1,0 +1,17 @@
+[data-theme='sl'] {
+  --logo-url: url('/img/parlameter-logo.svg');
+  --bg-url: url('/img/parlameter-bg.png');
+  --background-light: #fff;
+  --background-accent: #227497;
+  --text-light: #fff;
+  --text-dark: #003143;
+}
+
+[data-theme='hr'] {
+  --logo-url: url('/img/parlametar-hr-logo.svg');
+  --bg-url: url('/img/parlametar-hr-bg.png');
+  --background-light: #fff;
+  --background-accent: #ea5658;
+  --text-light: #fff;
+  --text-dark: #e52421;
+}

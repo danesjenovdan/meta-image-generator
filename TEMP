@@ -1,0 +1,8 @@
+PARLACOLORS
+
+http://localhost:3000/parlameter/circle?acronym=SDS&h1=64.%20izredna%20seja&h2=4.%203.%202021&title=Besede%2C%20ki%20so%20zaznamovale%20sejo
+http://localhost:3000/parlameter/circle?image=https://cdn.nov.parlameter.si/v1/parlassets/img/people/square/P338.png&h1=64.%20izredna%20seja&h2=4.%203.%202021&title=Besede%2C%20ki%20so%20zaznamovale%20sejo
+http://localhost:3000/parlameter/circle?icon=https://cdn.nov.parlameter.si/v1/parlassets/icons/seja-izredna.svg&h1=64.%20izredna%20seja&h2=4.%203.%202021&title=Besede%2C%20ki%20so%20zaznamovale%20sejo
+
+
+eslint
