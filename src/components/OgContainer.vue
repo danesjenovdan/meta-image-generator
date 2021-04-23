@@ -16,7 +16,7 @@ export default {
   position: relative;
   width: 1200px;
   height: 630px;
-  background: var(--background-light);
+  background: var(--background-light, #fff);
   overflow: hidden;
 }
 </style>
