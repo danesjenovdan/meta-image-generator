@@ -6,7 +6,9 @@ async function takeScreenshot(
 ) {
   let browser = null;
   try {
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({
+      args: ['--no-sandbox'],
+    });
 
     const page = await browser.newPage();
     await page.setViewport({ width, height });
