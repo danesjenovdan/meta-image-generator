@@ -1,13 +1,16 @@
 require('make-promises-safe');
 require('./load-env.js');
-const { createReadStream } = require('fs');
+const { createReadStream, existsSync } = require('fs');
+const { ensureDir } = require('fs-extra');
 const { resolve } = require('path');
+const { createHash } = require('crypto');
 const { fastify: createFastify } = require('fastify');
 const fastifyStatic = require('fastify-static');
 const { takeScreenshot } = require('./screenshot.js');
 
 const staticPath = resolve('./dist');
 const indexPath = resolve('./dist/index.html');
+const mediaPath = resolve('./media');
 
 const port = process.env.PORT || 3000;
 
@@ -25,8 +28,19 @@ fastify.get('/*', async (request, reply) => {
     reply.type('text/html').send(createReadStream(indexPath));
   } else if (format === 'image') {
     const url = new URL(request.url, `http://localhost:${port}/`);
-    url.searchParams.set('format', 'html');
-    const image = await takeScreenshot(url.toString());
+    url.searchParams.delete('format');
+    const cacheKey = createHash('sha1').update(url.toString()).digest('hex');
+    const imagePath = `${mediaPath}/${cacheKey}.png`;
+    let image;
+    await ensureDir(mediaPath);
+    if (existsSync(imagePath)) {
+      image = createReadStream(imagePath);
+    } else {
+      url.searchParams.set('format', 'html');
+      image = await takeScreenshot(url.toString(), {
+        savePath: imagePath,
+      });
+    }
     reply.type('image/png').send(image);
   } else {
     reply.status(400).send({
