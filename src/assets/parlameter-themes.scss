@@ -1,4 +1,4 @@
-[data-theme='sl'] {
+[data-theme='si'] {
   --logo-url: url('/img/parlameter-logo.svg');
   --bg-url: url('/img/parlameter-bg.png');
   --background-light: #fff;
@@ -14,4 +14,13 @@
   --background-accent: #ea5658;
   --text-light: #fff;
   --text-dark: #e52421;
+}
+
+[data-theme='ba'] {
+  --logo-url: url('/img/parlametar-ba-logo.svg');
+  --bg-url: url('/img/parlametar-ba-bg.png');
+  --background-light: #fff;
+  --background-accent: #7380be;
+  --text-light: #fff;
+  --text-dark: #283480;
 }

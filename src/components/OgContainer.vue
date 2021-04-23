@@ -1,5 +1,5 @@
 <template>
-  <div id="og-container" :data-theme="$route.query?.theme || 'sl'">
+  <div id="og-container" :data-theme="$route.query?.theme || 'si'">
     <slot />
   </div>
 </template>
