@@ -1,6 +1,8 @@
 {
   "name": "meta-image-generator",
   "version": "0.0.0",
+  "author": "Danes je nov dan",
+  "license": "Unlicense",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
