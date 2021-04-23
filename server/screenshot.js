@@ -1,15 +1,27 @@
-// const puppeteer = require('puppeteer');
-// const fs = require('fs');
+const puppeteer = require('puppeteer');
 
-// (async () => {
-//   const browser = await puppeteer.launch({
-//     //   headless:false,
-//   });
-//   const page = await browser.newPage();
-//   await page.goto('https://example.com');
-//   const image = await page.screenshot({ path: 'example.png' });
+async function takeScreenshot(
+  url,
+  { selector = '#og-container', width = 1200, height = 630, savePath } = {}
+) {
+  let browser = null;
+  try {
+    browser = await puppeteer.launch();
 
-//   fs.writeFileSync('image.png', image);
+    const page = await browser.newPage();
+    await page.setViewport({ width, height });
+    await page.goto(url, { waitUntil: 'networkidle0' });
 
-//   await browser.close();
-// })();
+    const elem = await page.$(selector);
+    const image = await elem.screenshot({ path: savePath });
+    return image;
+  } finally {
+    if (browser && browser.close) {
+      browser.close();
+    }
+  }
+}
+
+module.exports = {
+  takeScreenshot,
+};
