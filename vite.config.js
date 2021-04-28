@@ -7,11 +7,18 @@ function buildServerRoutes() {
     name: 'build-server-routes',
     moduleParsed(moduleInfo) {
       if (moduleInfo.id?.endsWith('routes.js')) {
-        const variableDeclarator = moduleInfo.ast.body.find(
-          (o) => o.type === 'VariableDeclaration'
-        )?.declarations?.[0];
-        if (variableDeclarator?.id?.name === 'routes') {
-          const elements = variableDeclarator.init?.elements || [];
+        const routesDeclaration = moduleInfo.ast.body
+          .filter((node) => node.type === 'VariableDeclaration')
+          .map((node) => node.declarations)
+          .flat()
+          .find(
+            (declaration) =>
+              declaration.id?.type === 'Identifier' &&
+              declaration.id?.name === 'routes' &&
+              declaration.init?.type === 'ArrayExpression'
+          );
+        if (routesDeclaration) {
+          const elements = routesDeclaration.init.elements || [];
           const paths = elements
             .map((e) => e?.properties.find((p) => p.key?.name === 'path'))
             .map((p) => p.value?.value);
