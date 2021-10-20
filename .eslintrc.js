@@ -13,6 +13,16 @@ module.exports = {
   plugins: ['vue', 'prettier'],
   rules: {
     'import/extensions': ['error', 'always'],
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        optionalDependencies: false,
+        devDependencies: [
+          '**/vite.config.{js,cjs,mjs}',
+          '**/.eslintrc.{js,cjs,mjs}',
+        ],
+      },
+    ],
   },
   settings: {
     'import/resolver': {
