@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meta-image-generator
+  labels:
+    app: meta-image-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meta-image-generator
+  template:
+    metadata:
+      labels:
+        app: meta-image-generator
+    spec:
+      containers:
+        - name: meta-image-generator
+          image: meta-image-generator
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              # dont use 512 or less for chrome
+              memory: 576Mi
+              cpu: 200m
+            limits:
+              # dont use 512 or less for chrome
+              memory: 576Mi
+              cpu: 200m

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: meta-image-generator
+spec:
+  selector:
+    app: meta-image-generator
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
