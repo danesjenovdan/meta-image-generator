@@ -2,7 +2,13 @@ const puppeteer = require('puppeteer');
 
 async function takeScreenshot(
   url,
-  { selector = '#og-container', width = 1200, height = 630, savePath } = {}
+  {
+    selector = '#og-container',
+    beforeScreenshot,
+    width = 1200,
+    height = 630,
+    savePath,
+  } = {}
 ) {
   let browser = null;
   try {
@@ -13,6 +19,10 @@ async function takeScreenshot(
     const page = await browser.newPage();
     await page.setViewport({ width, height });
     await page.goto(url, { waitUntil: 'networkidle0' });
+
+    if (beforeScreenshot) {
+      await beforeScreenshot(page);
+    }
 
     const elem = await page.$(selector);
     const image = await elem.screenshot({ path: savePath });

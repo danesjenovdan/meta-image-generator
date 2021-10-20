@@ -1,16 +1,17 @@
 require('make-promises-safe');
 require('./load-env.js');
-const { createReadStream, existsSync } = require('fs');
-const { ensureDir, readJSONSync } = require('fs-extra');
 const { resolve } = require('path');
-const { createHash } = require('crypto');
 const { fastify: createFastify } = require('fastify');
-const { takeScreenshot } = require('./screenshot.js');
+const {
+  matches: matchesInternalRoute,
+  handle: handleInternalRoute,
+} = require('./internal-routes.js');
+const {
+  matches: matchesExternalRoute,
+  handle: handleExternalRoute,
+} = require('./external-routes.js');
 
 const staticPath = resolve('./dist');
-const indexPath = resolve('./dist/index.html');
-const mediaPath = resolve('./media');
-const routeJson = readJSONSync('./dist/routes.json');
 
 const port = process.env.PORT || 3000;
 
@@ -26,38 +27,19 @@ fastify.register(require('fastify-static'), {
 
 fastify.get('/*', async (request, reply) => {
   const url = new URL(request.url, `http://localhost:${port}/`);
-
-  if (!routeJson.routes.includes(url.pathname)) {
-    reply.notFound();
-    return;
-  }
-
   const format = request.query.format || 'image';
 
-  if (format === 'html') {
-    reply.type('text/html').send(createReadStream(indexPath));
+  if (matchesInternalRoute(url)) {
+    await handleInternalRoute(url, format, request, reply);
     return;
   }
 
-  if (format === 'image') {
-    url.searchParams.delete('format');
-    const cacheKey = createHash('sha1').update(url.toString()).digest('hex');
-    const imagePath = `${mediaPath}/${cacheKey}.png`;
-    let image;
-    await ensureDir(mediaPath);
-    if (existsSync(imagePath)) {
-      image = createReadStream(imagePath);
-    } else {
-      url.searchParams.set('format', 'html');
-      image = await takeScreenshot(url.toString(), {
-        savePath: imagePath,
-      });
-    }
-    reply.type('image/png').send(image);
+  if (matchesExternalRoute(url)) {
+    await handleExternalRoute(url, format, request, reply);
     return;
   }
 
-  reply.badRequest(`Invalid format: ${format}`);
+  reply.notFound();
 });
 
 fastify.listen(port, '0.0.0.0', (error) => {
