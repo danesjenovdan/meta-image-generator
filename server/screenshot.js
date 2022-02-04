@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer');
 
-async function takeScreenshot(
+const screenshotsInProgress = {};
+
+async function takeScreenshotImpl(
   url,
   {
     selector = '#og-container',
@@ -32,6 +34,19 @@ async function takeScreenshot(
       browser.close();
     }
   }
+}
+
+async function takeScreenshot(url, options) {
+  const { savePath } = options;
+  if (!screenshotsInProgress[savePath]) {
+    // set promise as being in progress
+    screenshotsInProgress[savePath] = takeScreenshotImpl(url, options);
+    // remove promise when it's done
+    screenshotsInProgress[savePath].finally(() => {
+      screenshotsInProgress[savePath] = null;
+    });
+  }
+  return screenshotsInProgress[savePath];
 }
 
 module.exports = {

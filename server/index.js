@@ -27,15 +27,22 @@ fastify.register(require('fastify-static'), {
 
 fastify.get('/*', async (request, reply) => {
   const url = new URL(request.url, `http://localhost:${port}/`);
+
   const format = request.query.format || 'image';
+  url.searchParams.delete('format');
+
+  const force = ['1', 'true', 'yes', 'on'].includes(
+    request.query.force?.toLowerCase?.()
+  );
+  url.searchParams.delete('force');
 
   if (matchesInternalRoute(url)) {
-    await handleInternalRoute(url, format, request, reply);
+    await handleInternalRoute(request, reply, { url, format, force });
     return;
   }
 
   if (matchesExternalRoute(url)) {
-    await handleExternalRoute(url, format, request, reply);
+    await handleExternalRoute(request, reply, { url, format, force });
     return;
   }
 

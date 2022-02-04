@@ -3,6 +3,7 @@ const { createHash } = require('crypto');
 const { ensureDir } = require('fs-extra');
 const { createReadStream, existsSync } = require('fs');
 const { takeScreenshot } = require('./screenshot.js');
+const { fileExceededMaxAge } = require('./utils.js');
 
 const mediaPath = resolve('./media');
 
@@ -20,8 +21,17 @@ const routes = {
         );
       });
     },
+    maxAge: 1000 * 60 * 30, // 30 minutes
   },
 };
+
+async function takeAndSaveScreenshot(route, imagePath) {
+  return takeScreenshot(route.url, {
+    selector: route.selector,
+    beforeScreenshot: route.beforeScreenshot,
+    savePath: imagePath,
+  });
+}
 
 function matches(url) {
   if (!url.pathname.startsWith('/external/')) {
@@ -34,23 +44,23 @@ function matches(url) {
   return false;
 }
 
-async function handle(url, format, request, reply) {
+async function handle(request, reply, { url, format, force } = {}) {
   if (format === 'image') {
-    url.searchParams.delete('format');
     const cacheKey = createHash('sha1').update(url.toString()).digest('hex');
     const imagePath = `${mediaPath}/${cacheKey}.png`;
+    const path = url.pathname.replace(/^\/external\//, '').replace(/\/$/, '');
+    const route = routes[path];
+
     let image;
     await ensureDir(mediaPath);
-    if (existsSync(imagePath)) {
-      image = createReadStream(imagePath);
+    if (!force && existsSync(imagePath)) {
+      if (await fileExceededMaxAge(imagePath, route.maxAge)) {
+        image = await takeAndSaveScreenshot(route, imagePath);
+      } else {
+        image = createReadStream(imagePath);
+      }
     } else {
-      const path = url.pathname.replace(/^\/external\//, '').replace(/\/$/, '');
-      const route = routes[path];
-      image = await takeScreenshot(route.url, {
-        selector: route.selector,
-        beforeScreenshot: route.beforeScreenshot,
-        savePath: imagePath,
-      });
+      image = await takeAndSaveScreenshot(route, imagePath);
     }
     reply.type('image/png').send(image);
     return;
