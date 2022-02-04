@@ -34,14 +34,13 @@ function matches(url) {
   return false;
 }
 
-async function handle(url, format, request, reply) {
+async function handle(request, reply, { url, format, force } = {}) {
   if (format === 'image') {
-    url.searchParams.delete('format');
     const cacheKey = createHash('sha1').update(url.toString()).digest('hex');
     const imagePath = `${mediaPath}/${cacheKey}.png`;
     let image;
     await ensureDir(mediaPath);
-    if (existsSync(imagePath)) {
+    if (!force && existsSync(imagePath)) {
       image = createReadStream(imagePath);
     } else {
       const path = url.pathname.replace(/^\/external\//, '').replace(/\/$/, '');
