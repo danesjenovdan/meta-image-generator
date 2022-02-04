@@ -1,10 +1,12 @@
 const { resolve } = require('path');
 const { createHash } = require('crypto');
-const { ensureDir } = require('fs-extra');
+const { ensureDir, stat } = require('fs-extra');
 const { createReadStream, existsSync } = require('fs');
 const { takeScreenshot } = require('./screenshot.js');
 
 const mediaPath = resolve('./media');
+
+const screenshotsInProgress = {};
 
 const routes = {
   'zadrugator-map': {
@@ -20,8 +22,25 @@ const routes = {
         );
       });
     },
+    maxAge: 1000 * 60 * 30, // 30 minutes
   },
 };
+
+async function takeAndSaveScreenshot(route, imagePath) {
+  if (!screenshotsInProgress[imagePath]) {
+    // set promise as being in progress
+    screenshotsInProgress[imagePath] = takeScreenshot(route.url, {
+      selector: route.selector,
+      beforeScreenshot: route.beforeScreenshot,
+      savePath: imagePath,
+    });
+    // remove promise when it's done
+    screenshotsInProgress[imagePath].finally(() => {
+      screenshotsInProgress[imagePath] = null;
+    });
+  }
+  return screenshotsInProgress[imagePath];
+}
 
 function matches(url) {
   if (!url.pathname.startsWith('/external/')) {
@@ -38,18 +57,22 @@ async function handle(request, reply, { url, format, force } = {}) {
   if (format === 'image') {
     const cacheKey = createHash('sha1').update(url.toString()).digest('hex');
     const imagePath = `${mediaPath}/${cacheKey}.png`;
+    const path = url.pathname.replace(/^\/external\//, '').replace(/\/$/, '');
+    const route = routes[path];
+
     let image;
     await ensureDir(mediaPath);
     if (!force && existsSync(imagePath)) {
-      image = createReadStream(imagePath);
+      const stats = await stat(imagePath);
+      const imageAge = Date.now() - stats.mtimeMs;
+      // check if image is too old
+      if (route.maxAge && imageAge > route.maxAge) {
+        image = await takeAndSaveScreenshot(route, imagePath);
+      } else {
+        image = createReadStream(imagePath);
+      }
     } else {
-      const path = url.pathname.replace(/^\/external\//, '').replace(/\/$/, '');
-      const route = routes[path];
-      image = await takeScreenshot(route.url, {
-        selector: route.selector,
-        beforeScreenshot: route.beforeScreenshot,
-        savePath: imagePath,
-      });
+      image = await takeAndSaveScreenshot(route, imagePath);
     }
     reply.type('image/png').send(image);
     return;
