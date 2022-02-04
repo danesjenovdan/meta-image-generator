@@ -1,8 +1,9 @@
 const { resolve } = require('path');
 const { createHash } = require('crypto');
-const { ensureDir, stat } = require('fs-extra');
+const { ensureDir } = require('fs-extra');
 const { createReadStream, existsSync } = require('fs');
 const { takeScreenshot } = require('./screenshot.js');
+const { fileExceededMaxAge } = require('./utils.js');
 
 const mediaPath = resolve('./media');
 
@@ -63,10 +64,7 @@ async function handle(request, reply, { url, format, force } = {}) {
     let image;
     await ensureDir(mediaPath);
     if (!force && existsSync(imagePath)) {
-      const stats = await stat(imagePath);
-      const imageAge = Date.now() - stats.mtimeMs;
-      // check if image is too old
-      if (route.maxAge && imageAge > route.maxAge) {
+      if (await fileExceededMaxAge(imagePath, route.maxAge)) {
         image = await takeAndSaveScreenshot(route, imagePath);
       } else {
         image = createReadStream(imagePath);
