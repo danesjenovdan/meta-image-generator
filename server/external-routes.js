@@ -7,8 +7,6 @@ const { fileExceededMaxAge } = require('./utils.js');
 
 const mediaPath = resolve('./media');
 
-const screenshotsInProgress = {};
-
 const routes = {
   'zadrugator-map': {
     url: 'https://stanovanjske-zadruge-zemljevid-peticija.lb.djnd.si/',
@@ -28,19 +26,11 @@ const routes = {
 };
 
 async function takeAndSaveScreenshot(route, imagePath) {
-  if (!screenshotsInProgress[imagePath]) {
-    // set promise as being in progress
-    screenshotsInProgress[imagePath] = takeScreenshot(route.url, {
-      selector: route.selector,
-      beforeScreenshot: route.beforeScreenshot,
-      savePath: imagePath,
-    });
-    // remove promise when it's done
-    screenshotsInProgress[imagePath].finally(() => {
-      screenshotsInProgress[imagePath] = null;
-    });
-  }
-  return screenshotsInProgress[imagePath];
+  return takeScreenshot(route.url, {
+    selector: route.selector,
+    beforeScreenshot: route.beforeScreenshot,
+    savePath: imagePath,
+  });
 }
 
 function matches(url) {

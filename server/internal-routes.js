@@ -9,22 +9,6 @@ const routeJson = readJSONSync('./dist/routes.json');
 const indexPath = resolve('./dist/index.html');
 const mediaPath = resolve('./media');
 
-const screenshotsInProgress = {};
-
-async function takeAndSaveScreenshot(url, imagePath) {
-  if (!screenshotsInProgress[imagePath]) {
-    // set promise as being in progress
-    screenshotsInProgress[imagePath] = takeScreenshot(url.toString(), {
-      savePath: imagePath,
-    });
-    // remove promise when it's done
-    screenshotsInProgress[imagePath].finally(() => {
-      screenshotsInProgress[imagePath] = null;
-    });
-  }
-  return screenshotsInProgress[imagePath];
-}
-
 function matches(url) {
   return routeJson.routes.includes(url.pathname);
 }
@@ -44,13 +28,13 @@ async function handle(request, reply, { url, format, force } = {}) {
     await ensureDir(mediaPath);
     if (!force && existsSync(imagePath)) {
       if (await fileExceededMaxAge(imagePath, route.maxAge)) {
-        image = await takeAndSaveScreenshot(url, imagePath);
+        image = await takeScreenshot(url.toString(), { savePath: imagePath });
       } else {
         image = createReadStream(imagePath);
       }
     } else {
       url.searchParams.set('format', 'html');
-      image = await takeAndSaveScreenshot(url, imagePath);
+      image = await takeScreenshot(url.toString(), { savePath: imagePath });
     }
     reply.type('image/png').send(image);
     return;
