@@ -9,6 +9,8 @@ const routeJson = readJSONSync('./dist/routes.json');
 const indexPath = resolve('./dist/index.html');
 const mediaPath = resolve('./media');
 
+const maxAge = 0; // 0 = disabled (no limit)
+
 function matches(url) {
   return routeJson.routes.includes(url.pathname);
 }
@@ -22,12 +24,11 @@ async function handle(request, reply, { url, format, force } = {}) {
   if (format === 'image') {
     const cacheKey = createHash('sha1').update(url.toString()).digest('hex');
     const imagePath = `${mediaPath}/${cacheKey}.png`;
-    const route = routeJson.routes[url.pathname];
 
     let image;
     await ensureDir(mediaPath);
     if (!force && existsSync(imagePath)) {
-      if (await fileExceededMaxAge(imagePath, route.maxAge)) {
+      if (await fileExceededMaxAge(imagePath, maxAge)) {
         image = await takeScreenshot(url.toString(), { savePath: imagePath });
       } else {
         image = createReadStream(imagePath);
