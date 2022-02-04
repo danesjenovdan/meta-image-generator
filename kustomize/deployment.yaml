@@ -22,9 +22,9 @@ spec:
           resources:
             requests:
               # dont use 512 or less for chrome
-              memory: 576Mi
-              cpu: 200m
+              memory: 1024Mi
+              cpu: 1000m
             limits:
               # dont use 512 or less for chrome
-              memory: 576Mi
-              cpu: 200m
+              memory: 1024Mi
+              cpu: 1000m
