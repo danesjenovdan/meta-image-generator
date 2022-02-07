@@ -12,6 +12,12 @@ If value is `image` (default) it generates a png images from the template. If va
 
 If value is `true` or `1` it will bypass the image cache and force a new screenshot. Only applicable if format is `image`.
 
+**`theme = <string>`**
+
+Default value is `si` and will include colors for slovenian parlameter. Some other options are `hr`, `ba`, ...
+
+Color themes are defined in [parlameter-themes.scss](../src/assets/parlameter-themes.scss)
+
 
 ## `/parlameter/generic`
 
