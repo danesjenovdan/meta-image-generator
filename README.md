@@ -26,3 +26,12 @@ These are routes that generate image from an external url. All routes are prefix
 Example url: https://meta-image-generator.lb.djnd.si/external/zadrugator-map
 
 List of all external routes is in [server/external-routes.js](./server/external-routes.js#L10) and documented [here](./docs/external-routes.md).
+
+
+### Caching
+
+Generated images are cached based on their url.
+
+Query parameters `format` and `force` are removed from the url before generating the cache key. All other query parameters and their order is preserved.
+
+This means `?format=image&title=hello+there&h1=blah` and `?title=hello+there&h1=blah` are considered the same, but `?title=hello+there&h1=blah` and `?h1=blah&title=hello+there` are different.
