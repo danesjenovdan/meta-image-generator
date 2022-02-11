@@ -33,7 +33,31 @@ export default {
 
 <style lang="scss" scoped>
 .image-bg {
-  background-image: var(--bg-url);
+  position: relative;
+  z-index: 0;
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  &::before {
+    background-image: var(--bg-url);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0.25;
+    filter: grayscale(1) blur(3px);
+  }
+
+  &::after {
+    background: var(--background-accent);
+    mix-blend-mode: multiply;
+  }
 }
 
 h1 {

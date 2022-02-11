@@ -32,7 +32,7 @@
 
 <script>
 import VerticalHalf from '@/components/VerticalHalf.vue';
-import { isAllowedDomain } from '@/helpers/utils.js';
+import { isAllowedUrl } from '@/helpers/utils.js';
 
 export default {
   name: 'Circle',
@@ -41,9 +41,8 @@ export default {
   },
   data() {
     const { title, h1, h2, icon, image, acronym } = this.$route.query;
-    const allowedDomains = ['parlameter.si', 'parlametar.hr'];
-    const safeIcon = isAllowedDomain(icon, allowedDomains) ? icon : '';
-    const safeImage = isAllowedDomain(image, allowedDomains) ? image : '';
+    const safeIcon = isAllowedUrl(icon) ? icon : '';
+    const safeImage = isAllowedUrl(image) ? image : '';
     return {
       params: {
         title: title ?? '',

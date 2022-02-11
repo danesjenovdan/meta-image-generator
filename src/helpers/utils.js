@@ -1,9 +1,17 @@
-const isAllowedDomain = (url, allowedDomains = []) => {
+const allowedDomains = [
+  { domain: 'parlameter.si' },
+  { domain: 'parlametar.hr' },
+  { domain: 'scw.cloud', path: '/parlameter/' },
+  { domain: 'djnd.si' },
+];
+
+const isAllowedUrl = (urlString) => {
   try {
-    const urlObj = new URL(url);
+    const url = new URL(urlString);
     return allowedDomains.some(
-      (domain) =>
-        urlObj.hostname === domain || urlObj.hostname.endsWith(`.${domain}`)
+      ({ domain, path }) =>
+        (url.hostname === domain || url.hostname.endsWith(`.${domain}`)) &&
+        (!path || url.pathname.startsWith(path))
     );
   } catch (errpr) {
     return false;
@@ -11,4 +19,4 @@ const isAllowedDomain = (url, allowedDomains = []) => {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { isAllowedDomain };
+export { isAllowedUrl };
