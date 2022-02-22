@@ -8,4 +8,4 @@ resources:
 images:
   - name: meta-image-generator
     newName: rg.fr-par.scw.cloud/djnd/meta-image-generator
-    newTag: '46d225f821080e7b60c5e40aedd532e068492e34'
+    newTag: 'c70dcd7631596c76738a662e627cabac5c3b635b'
