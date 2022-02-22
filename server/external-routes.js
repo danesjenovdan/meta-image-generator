@@ -9,7 +9,7 @@ const mediaPath = resolve('./media');
 
 const routes = {
   'zadrugator-map': {
-    url: 'https://stanovanjske-zadruge-zemljevid-peticija.lb.djnd.si/',
+    url: 'https://zemljevid.zastanovanjskezadruge.si/',
     selector: '.map-container',
     async beforeScreenshot(page) {
       page.evaluate(() => {
