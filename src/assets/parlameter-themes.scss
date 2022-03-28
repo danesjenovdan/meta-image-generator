@@ -1,10 +1,10 @@
-[data-theme='si'] {
-  --logo-url: url('/img/parlameter-logo.svg');
+[data-theme='ba'] {
+  --logo-url: url('/img/parlametar-ba-logo.svg');
   --bg-url: url('/img/parlameter-bg-raw.jpg');
   --background-light: #fff;
-  --background-accent: #227497;
+  --background-accent: #7380be;
   --text-light: #fff;
-  --text-dark: #003143;
+  --text-dark: #283480;
 }
 
 [data-theme='hr'] {
@@ -16,16 +16,43 @@
   --text-dark: #e52421;
 }
 
-[data-theme='ba'] {
-  --logo-url: url('/img/parlametar-ba-logo.svg');
+[data-theme='sl'] {
+  --logo-url: url('/img/parlameter-logo.svg');
   --bg-url: url('/img/parlameter-bg-raw.jpg');
   --background-light: #fff;
-  --background-accent: #7380be;
+  --background-accent: #227497;
   --text-light: #fff;
-  --text-dark: #283480;
+  --text-dark: #003143;
 }
 
-[data-theme='ljubljana'] {
+[data-theme='sl-obcina-ajdovscina'] {
+  --logo-url: url('https://parlassets-ajdovscina.lb.djnd.si/img/logo-parlameter.svg');
+  --bg-url: url('/img/parlameter-bg-raw.jpg');
+  --background-light: #fff;
+  --background-accent: #007a78;
+  --text-light: #fff;
+  --text-dark: #005554;
+}
+
+[data-theme='sl-obcina-hrastnik'] {
+  --logo-url: url('https://parlassets-hrastnik.lb.djnd.si/img/logo-parlameter.svg');
+  --bg-url: url('/img/parlameter-bg-raw.jpg');
+  --background-light: #fff;
+  --background-accent: #007a78;
+  --text-light: #fff;
+  --text-dark: #005554;
+}
+
+[data-theme='sl-obcina-lendava'] {
+  --logo-url: url('https://parlassets-lendava.lb.djnd.si/img/logo-parlameter.svg');
+  --bg-url: url('/img/parlameter-bg-raw.jpg');
+  --background-light: #fff;
+  --background-accent: #007a78;
+  --text-light: #fff;
+  --text-dark: #005554;
+}
+
+[data-theme='sl-obcina-ljubljana'] {
   --logo-url: url('https://cdn.ljubljana.parlameter.si/img/logo-parlameter.svg');
   --bg-url: url('/img/parlameter-bg-raw.jpg');
   --background-light: #fff;
