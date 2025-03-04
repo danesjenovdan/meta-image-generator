@@ -1,9 +1,9 @@
-const { resolve } = require('path');
-const { createHash } = require('crypto');
-const { ensureDir } = require('fs-extra');
-const { createReadStream, existsSync } = require('fs');
-const { takeScreenshot } = require('./screenshot.js');
-const { fileExceededMaxAge } = require('./utils.js');
+import { createHash } from 'node:crypto';
+import { createReadStream, existsSync } from 'node:fs';
+import { mkdir } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { takeScreenshot } from './screenshot.js';
+import { fileExceededMaxAge } from './utils.js';
 
 const mediaPath = resolve('./media');
 
@@ -17,7 +17,7 @@ const routes = {
         document.querySelector('.signatures-popup').remove();
         document.head.insertAdjacentHTML(
           'beforeend',
-          '<style>.map-container::after { content:""; display:block; clear:both; }</style>'
+          '<style>.map-container::after { content:""; display:block; clear:both; }</style>',
         );
       });
     },
@@ -52,7 +52,7 @@ async function handle(request, reply, { url, format, force } = {}) {
     const route = routes[path];
 
     let image;
-    await ensureDir(mediaPath);
+    await mkdir(mediaPath, { recursive: true });
     if (!force && existsSync(imagePath)) {
       if (await fileExceededMaxAge(imagePath, route.maxAge)) {
         image = await takeAndSaveScreenshot(route, imagePath);
@@ -69,7 +69,4 @@ async function handle(request, reply, { url, format, force } = {}) {
   reply.badRequest(`Invalid format: ${format}`);
 }
 
-module.exports = {
-  matches,
-  handle,
-};
+export { handle, matches };

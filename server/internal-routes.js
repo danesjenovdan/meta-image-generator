@@ -1,12 +1,16 @@
-const { resolve } = require('path');
-const { ensureDir, readJSONSync } = require('fs-extra');
-const { createReadStream, existsSync } = require('fs');
-const { createHash } = require('crypto');
-const { takeScreenshot } = require('./screenshot.js');
-const { fileExceededMaxAge } = require('./utils.js');
+import { createHash } from 'node:crypto';
+import { createReadStream, existsSync, readFileSync } from 'node:fs';
+import { mkdir } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { takeScreenshot } from './screenshot.js';
+import { fileExceededMaxAge } from './utils.js';
 
-const routeJson = readJSONSync('./dist/routes.json');
+const routeFileContents = readFileSync('./dist/routes.json', 'utf8');
+const routeJson = JSON.parse(routeFileContents);
+
 const indexPath = resolve('./dist/index.html');
+const indexFileContents = readFileSync(indexPath, 'utf8');
+
 const mediaPath = resolve('./media');
 
 const maxAge = 0; // 0 = disabled (no limit)
@@ -17,7 +21,8 @@ function matches(url) {
 
 async function handle(request, reply, { url, format, force } = {}) {
   if (format === 'html') {
-    reply.type('text/html').send(createReadStream(indexPath));
+    reply.type('text/html');
+    reply.send(indexFileContents);
     return;
   }
 
@@ -26,7 +31,7 @@ async function handle(request, reply, { url, format, force } = {}) {
     const imagePath = `${mediaPath}/${cacheKey}.png`;
 
     let image;
-    await ensureDir(mediaPath);
+    await mkdir(mediaPath, { recursive: true });
     if (!force && existsSync(imagePath)) {
       if (await fileExceededMaxAge(imagePath, maxAge)) {
         image = await takeScreenshot(url.toString(), { savePath: imagePath });
@@ -44,7 +49,4 @@ async function handle(request, reply, { url, format, force } = {}) {
   reply.badRequest(`Invalid format: ${format}`);
 }
 
-module.exports = {
-  matches,
-  handle,
-};
+export { handle, matches };

@@ -1,4 +1,4 @@
-const { stat } = require('fs-extra');
+import { stat } from 'node:fs/promises';
 
 async function fileExceededMaxAge(imagePath, maxAge) {
   if (maxAge > 0) {
@@ -9,6 +9,5 @@ async function fileExceededMaxAge(imagePath, maxAge) {
   return false;
 }
 
-module.exports = {
-  fileExceededMaxAge,
-};
+// eslint-disable-next-line import/prefer-default-export
+export { fileExceededMaxAge };

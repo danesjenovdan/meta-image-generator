@@ -1,25 +1,30 @@
-require('./load-env.js');
-const { resolve } = require('path');
-const { fastify: createFastify } = require('fastify');
-const {
-  matches: matchesInternalRoute,
-  handle: handleInternalRoute,
-} = require('./internal-routes.js');
-const {
-  matches: matchesExternalRoute,
-  handle: handleExternalRoute,
-} = require('./external-routes.js');
+import fastifySensible from '@fastify/sensible';
+import fastifyStatic from '@fastify/static';
+import dotenvExpand from 'dotenv-expand';
+import dotenv from 'dotenv-flow';
+import createFastify from 'fastify';
+import { resolve } from 'node:path';
+import {
+  handle as handleExternalRoute,
+  matches as matchesExternalRoute,
+} from './external-routes.js';
+import {
+  handle as handleInternalRoute,
+  matches as matchesInternalRoute,
+} from './internal-routes.js';
 
-const staticPath = resolve('./dist');
+dotenvExpand.expand(dotenv.config());
 
-const port = process.env.PORT || 3000;
+const distPath = resolve('./dist');
+
+const port = process.env.VITE_PORT || 3000;
 
 const fastify = createFastify({ logger: true });
 
-fastify.register(require('fastify-sensible'));
+fastify.register(fastifySensible);
 
-fastify.register(require('fastify-static'), {
-  root: staticPath,
+fastify.register(fastifyStatic, {
+  root: distPath,
   prefix: '/',
   wildcard: false,
 });
@@ -31,7 +36,7 @@ fastify.get('/*', async (request, reply) => {
   url.searchParams.delete('format');
 
   const force = ['1', 'true', 'yes', 'on'].includes(
-    request.query.force?.toLowerCase?.()
+    request.query.force?.toLowerCase?.(),
   );
   url.searchParams.delete('force');
 
@@ -48,7 +53,7 @@ fastify.get('/*', async (request, reply) => {
   reply.notFound();
 });
 
-fastify.listen(port, '0.0.0.0', (error) => {
+fastify.listen({ port, host: '0.0.0.0' }, (error) => {
   if (error) {
     fastify.log.error(error);
     process.exit(1);
