@@ -34,38 +34,22 @@
   --text-dark: #003143;
 }
 
-[data-theme='sl-obcina-ajdovscina'] {
-  --logo-url: url('https://parlassets-ajdovscina.lb.djnd.si/img/logo-parlameter.svg');
-  --bg-url: url('/img/parlameter-bg-raw.jpg');
-  --background-light: #fff;
-  --background-accent: #007a78;
-  --text-light: #fff;
-  --text-dark: #005554;
-}
+$obcine-list: (
+  'ajdovscina',
+  'hrastnik',
+  'lendava',
+  'ljubljana',
+  'medvode',
+  'trbovlje'
+);
 
-[data-theme='sl-obcina-hrastnik'] {
-  --logo-url: url('https://parlassets-hrastnik.lb.djnd.si/img/logo-parlameter.svg');
-  --bg-url: url('/img/parlameter-bg-raw.jpg');
-  --background-light: #fff;
-  --background-accent: #007a78;
-  --text-light: #fff;
-  --text-dark: #005554;
-}
-
-[data-theme='sl-obcina-lendava'] {
-  --logo-url: url('https://parlassets-lendava.lb.djnd.si/img/logo-parlameter.svg');
-  --bg-url: url('/img/parlameter-bg-raw.jpg');
-  --background-light: #fff;
-  --background-accent: #007a78;
-  --text-light: #fff;
-  --text-dark: #005554;
-}
-
-[data-theme='sl-obcina-ljubljana'] {
-  --logo-url: url('https://cdn.ljubljana.parlameter.si/img/logo-parlameter.svg');
-  --bg-url: url('/img/parlameter-bg-raw.jpg');
-  --background-light: #fff;
-  --background-accent: #007a78;
-  --text-light: #fff;
-  --text-dark: #005554;
+@each $obcina in $obcine-list {
+  [data-theme='sl-obcina-#{$obcina}'] {
+    --logo-url: url('https://cdn.#{$obcina}.parlameter.si/img/logo-parlameter.svg');
+    --bg-url: url('/img/parlameter-bg-raw.jpg');
+    --background-light: #fff;
+    --background-accent: #007a78;
+    --text-light: #fff;
+    --text-dark: #005554;
+  }
 }
