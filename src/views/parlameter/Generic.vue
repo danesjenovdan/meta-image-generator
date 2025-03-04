@@ -65,6 +65,7 @@ h1 {
   font-size: 60px;
   color: var(--text-light);
   text-align: center;
+  text-wrap: balance;
 }
 
 .logo {

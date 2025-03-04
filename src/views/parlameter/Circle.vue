@@ -129,6 +129,7 @@ export default {
     color: var(--text-light);
     line-height: 1.2;
     margin: 0;
+    text-wrap: balance;
   }
 
   .caption__heading {
@@ -155,6 +156,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-wrap: balance;
 }
 
 .logo-container {
