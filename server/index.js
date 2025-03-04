@@ -1,4 +1,3 @@
-require('make-promises-safe');
 require('./load-env.js');
 const { resolve } = require('path');
 const { fastify: createFastify } = require('fastify');

@@ -1,6 +1,9 @@
-import { resolve } from 'path';
-import { defineConfig } from 'vite';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
+
+const currentDir = dirname(fileURLToPath(import.meta.url));
 
 function buildServerRoutes() {
   return {
@@ -15,7 +18,7 @@ function buildServerRoutes() {
             (declaration) =>
               declaration.id?.type === 'Identifier' &&
               declaration.id?.name === 'routes' &&
-              declaration.init?.type === 'ArrayExpression'
+              declaration.init?.type === 'ArrayExpression',
           );
         if (routesDeclaration) {
           const elements = routesDeclaration.init.elements || [];
@@ -34,12 +37,20 @@ function buildServerRoutes() {
   };
 }
 
-export default defineConfig({
-  clearScreen: false,
-  plugins: [vue(), buildServerRoutes()],
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, 'src'),
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, currentDir);
+
+  return {
+    clearScreen: false,
+    plugins: [vue(), buildServerRoutes()],
+    resolve: {
+      alias: {
+        '@': resolve(currentDir, 'src'),
+      },
     },
-  },
+    server: {
+      port: env.VITE_PORT || 3000,
+      strictPort: true,
+    },
+  };
 });

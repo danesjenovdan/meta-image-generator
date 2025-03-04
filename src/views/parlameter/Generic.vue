@@ -27,8 +27,9 @@ export default {
 </script>
 
 <style lang="scss">
+@use '@/assets/parlameter-themes';
+
 @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:700&subset=latin,latin-ext');
-@import '@/assets/parlameter-themes';
 </style>
 
 <style lang="scss" scoped>

@@ -35,7 +35,7 @@ import VerticalHalf from '@/components/VerticalHalf.vue';
 import { isAllowedUrl } from '@/helpers/utils.js';
 
 export default {
-  name: 'Circle',
+  name: 'ParlameterCircle',
   components: {
     VerticalHalf,
   },
@@ -58,9 +58,10 @@ export default {
 </script>
 
 <style lang="scss">
+@use '@/assets/parlameter-themes';
+
 @import url('https://fonts.googleapis.com/css?family=Roboto:500,700&subset=latin,latin-ext');
 @import url('https://fonts.googleapis.com/css?family=Roboto+Slab:300&subset=latin,latin-ext');
-@import '@/assets/parlameter-themes';
 </style>
 
 <style lang="scss" scoped>
