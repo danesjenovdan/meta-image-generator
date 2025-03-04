@@ -63,10 +63,11 @@ async function handle(request, reply, { url, format, force } = {}) {
       image = await takeAndSaveScreenshot(route, imagePath);
     }
     reply.type('image/png').send(image);
-    return;
+    return true;
   }
 
   reply.badRequest(`Invalid format: ${format}`);
+  return true;
 }
 
 export { handle, matches };

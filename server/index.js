@@ -19,7 +19,7 @@ const distPath = resolve('./dist');
 
 const port = process.env.VITE_PORT || 3000;
 
-const fastify = createFastify({ logger: true });
+const fastify = createFastify({ logger: true, ignoreTrailingSlash: true });
 
 fastify.register(fastifySensible);
 
@@ -41,16 +41,19 @@ fastify.get('/*', async (request, reply) => {
   url.searchParams.delete('force');
 
   if (matchesInternalRoute(url)) {
-    await handleInternalRoute(request, reply, { url, format, force });
-    return;
+    if (await handleInternalRoute(request, reply, { url, format, force })) {
+      return reply;
+    }
   }
 
   if (matchesExternalRoute(url)) {
-    await handleExternalRoute(request, reply, { url, format, force });
-    return;
+    if (await handleExternalRoute(request, reply, { url, format, force })) {
+      return reply;
+    }
   }
 
   reply.notFound();
+  return reply;
 });
 
 fastify.listen({ port, host: '0.0.0.0' }, (error) => {

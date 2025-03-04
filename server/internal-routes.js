@@ -23,7 +23,7 @@ async function handle(request, reply, { url, format, force } = {}) {
   if (format === 'html') {
     reply.type('text/html');
     reply.send(indexFileContents);
-    return;
+    return true;
   }
 
   if (format === 'image') {
@@ -34,6 +34,7 @@ async function handle(request, reply, { url, format, force } = {}) {
     await mkdir(mediaPath, { recursive: true });
     if (!force && existsSync(imagePath)) {
       if (await fileExceededMaxAge(imagePath, maxAge)) {
+        url.searchParams.set('format', 'html');
         image = await takeScreenshot(url.toString(), { savePath: imagePath });
       } else {
         image = createReadStream(imagePath);
@@ -42,11 +43,13 @@ async function handle(request, reply, { url, format, force } = {}) {
       url.searchParams.set('format', 'html');
       image = await takeScreenshot(url.toString(), { savePath: imagePath });
     }
-    reply.type('image/png').send(image);
-    return;
+    reply.type('image/png');
+    reply.send(image);
+    return true;
   }
 
   reply.badRequest(`Invalid format: ${format}`);
+  return true;
 }
 
 export { handle, matches };
