@@ -11,7 +11,7 @@ const isAllowedUrl = (urlString) => {
     return allowedDomains.some(
       ({ domain, path }) =>
         (url.hostname === domain || url.hostname.endsWith(`.${domain}`)) &&
-        (!path || url.pathname.startsWith(path))
+        (!path || url.pathname.startsWith(path)),
     );
   } catch (errpr) {
     return false;

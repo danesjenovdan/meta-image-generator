@@ -1,7 +1,7 @@
 # ---
 # build stage image
 # ---
-FROM node:16-alpine as build
+FROM node:22-alpine AS build
 
 # set current directory
 WORKDIR /app
@@ -17,7 +17,7 @@ RUN yarn build
 # ---
 # actual image
 # ---
-FROM node:16-alpine
+FROM node:22-alpine
 
 # set current directory
 WORKDIR /app

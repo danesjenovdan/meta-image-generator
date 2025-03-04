@@ -16,6 +16,15 @@
   --text-dark: #e52421;
 }
 
+[data-theme='hr-zagreb'] {
+  --logo-url: url('/img/parlametar-hr-zagreb-logo.svg');
+  --bg-url: url('/img/parlameter-bg-raw.jpg');
+  --background-light: #fff;
+  --background-accent: #0146ad;
+  --text-light: #fff;
+  --text-dark: #163d73;
+}
+
 [data-theme='sl'] {
   --logo-url: url('/img/parlameter-logo.svg');
   --bg-url: url('/img/parlameter-bg-raw.jpg');
@@ -25,38 +34,22 @@
   --text-dark: #003143;
 }
 
-[data-theme='sl-obcina-ajdovscina'] {
-  --logo-url: url('https://parlassets-ajdovscina.lb.djnd.si/img/logo-parlameter.svg');
-  --bg-url: url('/img/parlameter-bg-raw.jpg');
-  --background-light: #fff;
-  --background-accent: #007a78;
-  --text-light: #fff;
-  --text-dark: #005554;
-}
+$obcine-list: (
+  'ajdovscina',
+  'hrastnik',
+  'lendava',
+  'ljubljana',
+  'medvode',
+  'trbovlje'
+);
 
-[data-theme='sl-obcina-hrastnik'] {
-  --logo-url: url('https://parlassets-hrastnik.lb.djnd.si/img/logo-parlameter.svg');
-  --bg-url: url('/img/parlameter-bg-raw.jpg');
-  --background-light: #fff;
-  --background-accent: #007a78;
-  --text-light: #fff;
-  --text-dark: #005554;
-}
-
-[data-theme='sl-obcina-lendava'] {
-  --logo-url: url('https://parlassets-lendava.lb.djnd.si/img/logo-parlameter.svg');
-  --bg-url: url('/img/parlameter-bg-raw.jpg');
-  --background-light: #fff;
-  --background-accent: #007a78;
-  --text-light: #fff;
-  --text-dark: #005554;
-}
-
-[data-theme='sl-obcina-ljubljana'] {
-  --logo-url: url('https://cdn.ljubljana.parlameter.si/img/logo-parlameter.svg');
-  --bg-url: url('/img/parlameter-bg-raw.jpg');
-  --background-light: #fff;
-  --background-accent: #007a78;
-  --text-light: #fff;
-  --text-dark: #005554;
+@each $obcina in $obcine-list {
+  [data-theme='sl-obcina-#{$obcina}'] {
+    --logo-url: url('https://cdn.#{$obcina}.parlameter.si/img/logo-parlameter.svg');
+    --bg-url: url('/img/parlameter-bg-raw.jpg');
+    --background-light: #fff;
+    --background-accent: #007a78;
+    --text-light: #fff;
+    --text-dark: #005554;
+  }
 }

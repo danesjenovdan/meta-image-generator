@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+import puppeteer from 'puppeteer';
 
 const screenshotsInProgress = {};
 
@@ -10,7 +10,7 @@ async function takeScreenshotImpl(
     width = 1200,
     height = 630,
     savePath,
-  } = {}
+  } = {},
 ) {
   let browser = null;
   try {
@@ -27,6 +27,10 @@ async function takeScreenshotImpl(
     }
 
     const elem = await page.$(selector);
+    if (!elem) {
+      throw new Error(`Element not found: ${selector}`);
+    }
+
     const image = await elem.screenshot({ path: savePath });
     return image;
   } finally {
@@ -49,6 +53,5 @@ async function takeScreenshot(url, options) {
   return screenshotsInProgress[savePath];
 }
 
-module.exports = {
-  takeScreenshot,
-};
+// eslint-disable-next-line import/prefer-default-export
+export { takeScreenshot };

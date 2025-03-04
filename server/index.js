@@ -1,26 +1,30 @@
-require('make-promises-safe');
-require('./load-env.js');
-const { resolve } = require('path');
-const { fastify: createFastify } = require('fastify');
-const {
-  matches: matchesInternalRoute,
-  handle: handleInternalRoute,
-} = require('./internal-routes.js');
-const {
-  matches: matchesExternalRoute,
-  handle: handleExternalRoute,
-} = require('./external-routes.js');
+import fastifySensible from '@fastify/sensible';
+import fastifyStatic from '@fastify/static';
+import dotenvExpand from 'dotenv-expand';
+import dotenv from 'dotenv-flow';
+import createFastify from 'fastify';
+import { resolve } from 'node:path';
+import {
+  handle as handleExternalRoute,
+  matches as matchesExternalRoute,
+} from './external-routes.js';
+import {
+  handle as handleInternalRoute,
+  matches as matchesInternalRoute,
+} from './internal-routes.js';
 
-const staticPath = resolve('./dist');
+dotenvExpand.expand(dotenv.config());
 
-const port = process.env.PORT || 3000;
+const distPath = resolve('./dist');
 
-const fastify = createFastify({ logger: true });
+const port = process.env.VITE_PORT || 3000;
 
-fastify.register(require('fastify-sensible'));
+const fastify = createFastify({ logger: true, ignoreTrailingSlash: true });
 
-fastify.register(require('fastify-static'), {
-  root: staticPath,
+fastify.register(fastifySensible);
+
+fastify.register(fastifyStatic, {
+  root: distPath,
   prefix: '/',
   wildcard: false,
 });
@@ -32,24 +36,27 @@ fastify.get('/*', async (request, reply) => {
   url.searchParams.delete('format');
 
   const force = ['1', 'true', 'yes', 'on'].includes(
-    request.query.force?.toLowerCase?.()
+    request.query.force?.toLowerCase?.(),
   );
   url.searchParams.delete('force');
 
   if (matchesInternalRoute(url)) {
-    await handleInternalRoute(request, reply, { url, format, force });
-    return;
+    if (await handleInternalRoute(request, reply, { url, format, force })) {
+      return reply;
+    }
   }
 
   if (matchesExternalRoute(url)) {
-    await handleExternalRoute(request, reply, { url, format, force });
-    return;
+    if (await handleExternalRoute(request, reply, { url, format, force })) {
+      return reply;
+    }
   }
 
   reply.notFound();
+  return reply;
 });
 
-fastify.listen(port, '0.0.0.0', (error) => {
+fastify.listen({ port, host: '0.0.0.0' }, (error) => {
   if (error) {
     fastify.log.error(error);
     process.exit(1);
