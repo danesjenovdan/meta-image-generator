@@ -4,15 +4,17 @@ metadata:
   name: meta-image-generator
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production"
+    traefik.ingress.kubernetes.io/router.middlewares: traefik-redirect-to-https@kubernetescrd
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   tls:
     - hosts:
-        - meta-image-generator.lb.djnd.si
+        - meta-image-generator.djnd.si
+        - meta-image-generator.danesjenovdan.si
       secretName: meta-image-generator-tls
   rules:
-    - host: meta-image-generator.lb.djnd.si
-      http:
+    - host: meta-image-generator.djnd.si
+      http: &http_paths
         paths:
           - path: /
             pathType: Prefix
@@ -21,3 +23,5 @@ spec:
                 name: meta-image-generator
                 port:
                   number: 3000
+    - host: meta-image-generator.danesjenovdan.si
+      http: *http_paths
