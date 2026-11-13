@@ -1,7 +1,7 @@
 # ---
 # build stage image
 # ---
-FROM node:22-alpine AS build
+FROM node:26-alpine AS build
 
 # set current directory
 WORKDIR /app
@@ -17,7 +17,11 @@ RUN npm run build
 # ---
 # actual image
 # ---
-FROM node:22-alpine
+FROM node:26-alpine
+
+# install tini
+RUN apk add --no-cache tini
+ENTRYPOINT ["/sbin/tini", "--"]
 
 # set current directory
 WORKDIR /app
@@ -45,4 +49,4 @@ COPY --from=build /app/server ./server
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+CMD ["node", "server/index.js"]
