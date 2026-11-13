@@ -10,7 +10,10 @@ function buildServerRoutes() {
     name: 'build-server-routes',
     moduleParsed(moduleInfo) {
       if (moduleInfo.id?.endsWith('routes.js')) {
-        const routesDeclaration = moduleInfo.ast.body
+        if (moduleInfo.code === null) {
+          this.error(`Source code unavailable for ${moduleInfo.id}`);
+        }
+        const routesDeclaration = this.parse(moduleInfo.code).body
           .filter((node) => node.type === 'VariableDeclaration')
           .map((node) => node.declarations)
           .flat()

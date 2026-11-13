@@ -1,23 +1,27 @@
 # ---
 # build stage image
 # ---
-FROM node:22-alpine AS build
+FROM node:26-alpine AS build
 
 # set current directory
 WORKDIR /app
 
 # install dependencies
-COPY package.json yarn.lock ./
-RUN yarn
+COPY package.json package-lock.json ./
+RUN npm ci
 
 # copy all files and run build
 COPY . .
-RUN yarn build
+RUN npm run build
 
 # ---
 # actual image
 # ---
-FROM node:22-alpine
+FROM node:26-alpine
+
+# install tini
+RUN apk add --no-cache tini
+ENTRYPOINT ["/sbin/tini", "--"]
 
 # set current directory
 WORKDIR /app
@@ -35,9 +39,9 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # install production dependencies only
-COPY package.json yarn.lock ./
+COPY package.json package-lock.json ./
 ENV NODE_ENV=production
-RUN yarn && yarn cache clean
+RUN npm ci
 
 # copy all needed files from build stage image
 COPY --from=build /app/dist ./dist
@@ -45,4 +49,4 @@ COPY --from=build /app/server ./server
 
 EXPOSE 3000
 
-CMD ["yarn", "start"]
+CMD ["node", "server/index.js"]
